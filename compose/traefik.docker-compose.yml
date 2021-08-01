@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  traefik:
+    image: traefik:2.3
+    container_name: traefik
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../traefik-config.yml:/traefik.yml
+      - ./acme.json:/acme.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      # Traefik configuration for the dashboard
+      - traefik.http.routers.traefik-https.rule=Host(`traefik.lp.ndser.page`)
+      - traefik.http.routers.traefik-https.entrypoints=http
+      - traefik.http.routers.traefik-https.service=api@internal
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy

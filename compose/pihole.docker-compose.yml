@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    environment:
+      TZ: "Pacific/Auckland"
+    volumes:
+      - ~/.docker-files/pihole/pihole/:/etc/pihole/
+      - ~/.docker-files/pihole/dnsmaq.d/:/etc/dnsmasq.d/
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - traefik.http.routers.pihole.rule=Host(`pihole.lp.ndser.page`)
+      - traefik.http.routers.pihole.entrypoints=http
+      - traefik.http.routers.pihole.service=pihole
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+
+# Define the default traefik_proxy network for external connection
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy

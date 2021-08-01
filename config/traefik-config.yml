@@ -1,0 +1,20 @@
+api:
+  dashboard: true
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+
+providers:
+  docker:
+    network: traefik_proxy
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: nduckett13@gmail.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: http
